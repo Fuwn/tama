@@ -1,0 +1,16 @@
+name: tama
+help: Command-line Hiruki Client
+version: 0.1.0
+dependencies: [curl, echo, tr, jq, sed, mdcat]
+commands:
+  - name: trending
+    alias: t
+  - name: popular
+    alias: p
+  - name: upcoming
+    alias: u
+  - name: search
+    alias: s
+    args:
+      - name: query
+        repeatable: true
