@@ -1,6 +1,13 @@
 # 📺 `tama`
 
-A command-line client for navigating and watching anime from [Hiruki](https://hiruki.xyz)
+A command-line client for navigating and streaming anime from [Hiruki](https://hiruki.xyz)
+
+Tama allows you to view recent anime trends, search for any anime, and watch any
+anime directly on your local system in a trivial manner.
+
+Tama supports any video player and defaults to [`mpv`](https://mpv.io/), but
+optionally allows you to open and view anime in your browser instead of a local
+video player.
 
 ## Usage
 
