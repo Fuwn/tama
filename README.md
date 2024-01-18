@@ -1,5 +1,7 @@
 # 📺 `tama`
 
+<img src="https://i.imgur.com/rxqMH46.png" align="right" height="420vw">
+
 A command-line client for navigating and streaming anime from [Hiruki](https://hiruki.xyz)
 
 Tama allows you to view recent anime trends, search for any anime, and watch any
