@@ -209,13 +209,25 @@ tama_watch_usage() {
   echo
 
   printf "%s\n" "Usage:"
-  printf "  tama watch ID EPISODE\n"
+  printf "  tama watch ID EPISODE [OPTIONS]\n"
   printf "  tama watch --help | -h\n"
   echo
 
   # :command.long_usage
   if [[ -n $long_usage ]]; then
     printf "%s\n" "Options:"
+
+    # :command.usage_flags
+    # :flag.usage
+    printf "  %s\n" "--browser, -b"
+    printf "    Open the stream in your browser instead of a local video player\n"
+    echo
+
+    # :flag.usage
+    printf "  %s\n" "--player, -p PLAYER"
+    printf "    Override mpv as the local video player\n"
+    printf "    Default: mpv\n"
+    echo
 
     # :command.usage_fixed_flags
     printf "  %s\n" "--help, -h"
@@ -387,10 +399,18 @@ tama_search_command() {
 # :command.function
 tama_watch_command() {
   # src/watch_command.sh
-  xdg-open "$(get "/stream/$(get "/episodes/${args[id]}" |
+  PLAYER="$(get "/stream/$(get "/episodes/${args[id]}" |
   	jq -r ".[] | .id" |
   	head -n 1 |
   	sed -E 's/-episode-[0-9]+$//')-episode-1" | jq -r ".plyr.default")"
+
+  if [[ -n "${args[--browser]}" ]]; then
+  	xdg-open "${PLAYER}"
+  else
+  	"${args[--player]}" "$(echo "${PLAYER}" |
+  		sed -E 's/.*#//' |
+  		base64 --decode)"
+  fi
 
 }
 
@@ -774,6 +794,13 @@ tama_watch_parse_requirements() {
     exit 1
   fi
 
+  if command -v base64 >/dev/null 2>&1; then
+    deps['base64']="$(command -v base64 | head -n1)"
+  else
+    printf "missing dependency: base64\n" >&2
+    exit 1
+  fi
+
   # :command.command_filter
   action="watch"
 
@@ -781,6 +808,28 @@ tama_watch_parse_requirements() {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case "$key" in
+      # :flag.case
+      --browser | -b)
+
+        # :flag.case_no_arg
+        args['--browser']=1
+        shift
+        ;;
+
+      # :flag.case
+      --player | -p)
+
+        # :flag.case_arg
+        if [[ -n ${2+x} ]]; then
+
+          args['--player']="$2"
+          shift
+          shift
+        else
+          printf "%s\n" "--player requires an argument: --player, -p PLAYER" >&2
+          exit 1
+        fi
+        ;;
 
       -?*)
         printf "invalid option: %s\n" "$key" >&2
@@ -810,13 +859,16 @@ tama_watch_parse_requirements() {
 
   # :command.required_args_filter
   if [[ -z ${args['id']+x} ]]; then
-    printf "missing required argument: ID\nusage: tama watch ID EPISODE\n" >&2
+    printf "missing required argument: ID\nusage: tama watch ID EPISODE [OPTIONS]\n" >&2
     exit 1
   fi
   if [[ -z ${args['episode']+x} ]]; then
-    printf "missing required argument: EPISODE\nusage: tama watch ID EPISODE\n" >&2
+    printf "missing required argument: EPISODE\nusage: tama watch ID EPISODE [OPTIONS]\n" >&2
     exit 1
   fi
+
+  # :command.default_assignments
+  [[ -n ${args['--player']:-} ]] || args['--player']="mpv"
 
 }
 

@@ -30,7 +30,16 @@ commands:
         required: true
         help: Episode to watch
     help: Watch an anime by episode
-    dependencies: [xdg-open]
+    dependencies: [xdg-open, base64]
+    flags:
+      - long: --browser
+        short: -b
+        help: Open the stream in your browser instead of a local video player
+      - long: --player
+        short: -p
+        arg: player
+        help: Override mpv as the local video player
+        default: mpv
   - name: episodes
     alias: e
     args:
