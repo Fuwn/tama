@@ -47,3 +47,10 @@ commands:
         required: true
     help: An anime's episodes
     dependencies: [head]
+  - name: recommend
+    alias: r
+    args:
+      - name: id
+        required: true
+        help: |
+          View recommended and similar anime to an anime
