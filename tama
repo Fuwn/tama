@@ -34,10 +34,10 @@ tama_usage() {
   echo
   # :command.usage_commands
   printf "%s\n" "Commands:"
-  printf "  %s   \n" "trending"
-  printf "  %s   \n" "popular "
-  printf "  %s   \n" "upcoming"
-  printf "  %s   \n" "search  "
+  printf "  %s   Trending anime\n" "trending"
+  printf "  %s   Popular anime\n" "popular "
+  printf "  %s   Upcoming anime\n" "upcoming"
+  printf "  %s   Search for a number of anime\n" "search  "
   echo
 
   # :command.long_usage
@@ -58,11 +58,11 @@ tama_usage() {
 # :command.usage
 tama_trending_usage() {
   if [[ -n $long_usage ]]; then
-    printf "tama trending\n"
+    printf "tama trending - Trending anime\n"
     echo
 
   else
-    printf "tama trending\n"
+    printf "tama trending - Trending anime\n"
     echo
 
   fi
@@ -90,11 +90,11 @@ tama_trending_usage() {
 # :command.usage
 tama_popular_usage() {
   if [[ -n $long_usage ]]; then
-    printf "tama popular\n"
+    printf "tama popular - Popular anime\n"
     echo
 
   else
-    printf "tama popular\n"
+    printf "tama popular - Popular anime\n"
     echo
 
   fi
@@ -122,11 +122,11 @@ tama_popular_usage() {
 # :command.usage
 tama_upcoming_usage() {
   if [[ -n $long_usage ]]; then
-    printf "tama upcoming\n"
+    printf "tama upcoming - Upcoming anime\n"
     echo
 
   else
-    printf "tama upcoming\n"
+    printf "tama upcoming - Upcoming anime\n"
     echo
 
   fi
@@ -154,11 +154,11 @@ tama_upcoming_usage() {
 # :command.usage
 tama_search_usage() {
   if [[ -n $long_usage ]]; then
-    printf "tama search\n"
+    printf "tama search - Search for a number of anime\n"
     echo
 
   else
-    printf "tama search\n"
+    printf "tama search - Search for a number of anime\n"
     echo
 
   fi

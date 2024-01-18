@@ -24,10 +24,10 @@ Usage:
   tama --version | -v
 
 Commands:
-  trending   
-  popular    
-  upcoming   
-  search
+  trending   Trending anime
+  popular    Popular anime
+  upcoming   Upcoming anime
+  search     Search for a number of anime
 ```
 
 ### Dependencies

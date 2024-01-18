@@ -5,12 +5,16 @@ dependencies: [curl, echo, tr, jq, sed, mdcat]
 commands:
   - name: trending
     alias: t
+    help: Trending anime
   - name: popular
     alias: p
+    help: Popular anime
   - name: upcoming
     alias: u
+    help: Upcoming anime
   - name: search
     alias: s
     args:
       - name: query
         repeatable: true
+    help: Search for a number of anime
