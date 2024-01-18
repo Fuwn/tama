@@ -13,6 +13,16 @@ bash <(curl -s "https://raw.githubusercontent.com/Fuwn/tama/main/tama")
 
 > Hint: Alias this in your shell profile: `alias tama="bash <(curl -s "https://raw.githubusercontent.com/Fuwn/tama/main/tama")"`
 
+### Watch Flow
+
+```shell
+# Find an anime to watch
+tama s my dress-up darling
+
+# Watch episode 1 using the ID found from the previous search operation
+tama w 132405 1
+```
+
 ### `--help`
 
 ```text
