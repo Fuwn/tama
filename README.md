@@ -1,6 +1,6 @@
 # 📺 `tama`
 
-A command-line client for searching [Hiruki](https://hiruki.xyz)
+A command-line client for navigating and watching anime from [Hiruki](https://hiruki.xyz)
 
 ## Usage
 
