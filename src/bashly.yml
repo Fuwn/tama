@@ -12,6 +12,9 @@ commands:
   - name: upcoming
     alias: u
     help: Upcoming anime
+  - name: current
+    alias: c
+    help: Currently airing anime
   - name: search
     alias: s
     args:
