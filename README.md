@@ -28,6 +28,8 @@ Commands:
   popular    Popular anime
   upcoming   Upcoming anime
   search     Search for a number of anime
+  watch      Watch an anime by episode
+  episodes   An anime's episodes
 ```
 
 ### Dependencies

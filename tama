@@ -38,6 +38,8 @@ tama_usage() {
   printf "  %s   Popular anime\n" "popular "
   printf "  %s   Upcoming anime\n" "upcoming"
   printf "  %s   Search for a number of anime\n" "search  "
+  printf "  %s   Watch an anime by episode\n" "watch   "
+  printf "  %s   An anime's episodes\n" "episodes"
   echo
 
   # :command.long_usage
@@ -167,7 +169,7 @@ tama_search_usage() {
   echo
 
   printf "%s\n" "Usage:"
-  printf "  tama search [QUERY...]\n"
+  printf "  tama search QUERY...\n"
   printf "  tama search --help | -h\n"
   echo
 
@@ -185,6 +187,91 @@ tama_search_usage() {
 
     # :argument.usage
     printf "  %s\n" "QUERY..."
+    printf "\n"
+    echo
+
+  fi
+}
+
+# :command.usage
+tama_watch_usage() {
+  if [[ -n $long_usage ]]; then
+    printf "tama watch - Watch an anime by episode\n"
+    echo
+
+  else
+    printf "tama watch - Watch an anime by episode\n"
+    echo
+
+  fi
+
+  printf "Alias: w\n"
+  echo
+
+  printf "%s\n" "Usage:"
+  printf "  tama watch ID EPISODE\n"
+  printf "  tama watch --help | -h\n"
+  echo
+
+  # :command.long_usage
+  if [[ -n $long_usage ]]; then
+    printf "%s\n" "Options:"
+
+    # :command.usage_fixed_flags
+    printf "  %s\n" "--help, -h"
+    printf "    Show this help\n"
+    echo
+
+    # :command.usage_args
+    printf "%s\n" "Arguments:"
+
+    # :argument.usage
+    printf "  %s\n" "ID"
+    printf "    Found by either the trending, popular, upcoming, or search subcommand\n"
+    echo
+
+    # :argument.usage
+    printf "  %s\n" "EPISODE"
+    printf "    Episode to watch\n"
+    echo
+
+  fi
+}
+
+# :command.usage
+tama_episodes_usage() {
+  if [[ -n $long_usage ]]; then
+    printf "tama episodes - An anime's episodes\n"
+    echo
+
+  else
+    printf "tama episodes - An anime's episodes\n"
+    echo
+
+  fi
+
+  printf "Alias: e\n"
+  echo
+
+  printf "%s\n" "Usage:"
+  printf "  tama episodes ID\n"
+  printf "  tama episodes --help | -h\n"
+  echo
+
+  # :command.long_usage
+  if [[ -n $long_usage ]]; then
+    printf "%s\n" "Options:"
+
+    # :command.usage_fixed_flags
+    printf "  %s\n" "--help, -h"
+    printf "    Show this help\n"
+    echo
+
+    # :command.usage_args
+    printf "%s\n" "Arguments:"
+
+    # :argument.usage
+    printf "  %s\n" "ID"
     printf "\n"
     echo
 
@@ -262,7 +349,7 @@ function print() {
 	echo
 
 	get "${1}" |
-		jq -r '.[] | ["[", .title.romaji, "](https://hiruki.xyz/i/", .id, ")"] | join("")' |
+		jq -r '.[] | ["[", .title.romaji, "](https://hiruki.xyz/i/", .id, ") • ", .id] | join("")' |
 		sed 's/^/* /' |
 		mdcat |
 		sed 's/^/   /'
@@ -294,6 +381,32 @@ tama_upcoming_command() {
 tama_search_command() {
   # src/search_command.sh
   print "/search/$(jq -rn --arg x "$(join "${args[query]}")" '$x | @uri')"
+
+}
+
+# :command.function
+tama_watch_command() {
+  # src/watch_command.sh
+  xdg-open "$(get "/stream/$(get "/episodes/${args[id]}" |
+  	jq -r ".[] | .id" |
+  	head -n 1 |
+  	sed -E 's/-episode-[0-9]+$//')-episode-1" | jq -r ".plyr.default")"
+
+}
+
+# :command.function
+tama_episodes_command() {
+  # src/episodes_command.sh
+  function episodes() {
+  	echo
+
+  	get "/episodes/${1}" |
+  		jq -r '.[] | [.number, ". ", .title] | join("")' |
+  		mdcat |
+  		sed 's/^/   /'
+  }
+
+  episodes "${args[id]}"
 
 }
 
@@ -394,6 +507,20 @@ parse_requirements() {
       action="search"
       shift
       tama_search_parse_requirements "$@"
+      shift $#
+      ;;
+
+    watch | w)
+      action="watch"
+      shift
+      tama_watch_parse_requirements "$@"
+      shift $#
+      ;;
+
+    episodes | e)
+      action="episodes"
+      shift
+      tama_episodes_parse_requirements "$@"
       shift $#
       ;;
 
@@ -613,6 +740,148 @@ tama_search_parse_requirements() {
     esac
   done
 
+  # :command.required_args_filter
+  if [[ -z ${args['query']+x} ]]; then
+    printf "missing required argument: QUERY\nusage: tama search QUERY...\n" >&2
+    exit 1
+  fi
+
+}
+
+# :command.parse_requirements
+tama_watch_parse_requirements() {
+  # :command.fixed_flags_filter
+  while [[ $# -gt 0 ]]; do
+    case "${1:-}" in
+      --help | -h)
+        long_usage=yes
+        tama_watch_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  # :command.dependencies_filter
+  if command -v xdg-open >/dev/null 2>&1; then
+    deps['xdg-open']="$(command -v xdg-open | head -n1)"
+  else
+    printf "missing dependency: xdg-open\n" >&2
+    exit 1
+  fi
+
+  # :command.command_filter
+  action="watch"
+
+  # :command.parse_requirements_while
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+
+      -?*)
+        printf "invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+        # :command.parse_requirements_case
+        # :command.parse_requirements_case_simple
+        if [[ -z ${args['id']+x} ]]; then
+
+          args['id']=$1
+          shift
+        elif [[ -z ${args['episode']+x} ]]; then
+
+          args['episode']=$1
+          shift
+        else
+          printf "invalid argument: %s\n" "$key" >&2
+          exit 1
+        fi
+
+        ;;
+
+    esac
+  done
+
+  # :command.required_args_filter
+  if [[ -z ${args['id']+x} ]]; then
+    printf "missing required argument: ID\nusage: tama watch ID EPISODE\n" >&2
+    exit 1
+  fi
+  if [[ -z ${args['episode']+x} ]]; then
+    printf "missing required argument: EPISODE\nusage: tama watch ID EPISODE\n" >&2
+    exit 1
+  fi
+
+}
+
+# :command.parse_requirements
+tama_episodes_parse_requirements() {
+  # :command.fixed_flags_filter
+  while [[ $# -gt 0 ]]; do
+    case "${1:-}" in
+      --help | -h)
+        long_usage=yes
+        tama_episodes_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  # :command.dependencies_filter
+  if command -v head >/dev/null 2>&1; then
+    deps['head']="$(command -v head | head -n1)"
+  else
+    printf "missing dependency: head\n" >&2
+    exit 1
+  fi
+
+  # :command.command_filter
+  action="episodes"
+
+  # :command.parse_requirements_while
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+
+      -?*)
+        printf "invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+        # :command.parse_requirements_case
+        # :command.parse_requirements_case_simple
+        if [[ -z ${args['id']+x} ]]; then
+
+          args['id']=$1
+          shift
+        else
+          printf "invalid argument: %s\n" "$key" >&2
+          exit 1
+        fi
+
+        ;;
+
+    esac
+  done
+
+  # :command.required_args_filter
+  if [[ -z ${args['id']+x} ]]; then
+    printf "missing required argument: ID\nusage: tama episodes ID\n" >&2
+    exit 1
+  fi
+
 }
 
 # :command.initialize
@@ -637,6 +906,8 @@ run() {
     "popular") tama_popular_command ;;
     "upcoming") tama_upcoming_command ;;
     "search") tama_search_command ;;
+    "watch") tama_watch_command ;;
+    "episodes") tama_episodes_command ;;
   esac
 }
 
