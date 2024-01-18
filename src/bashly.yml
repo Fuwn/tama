@@ -28,7 +28,8 @@ commands:
       - name: id
         required: true
         help: |
-          Found by either the trending, popular, upcoming, or search subcommand
+          Found by either the trending, popular, upcoming, current, or search
+          subcommand
       - name: episode
         required: true
         help: Episode to watch
@@ -52,8 +53,10 @@ commands:
     dependencies: [head]
   - name: recommend
     alias: r
+    help: View recommended and similar anime
     args:
       - name: id
         required: true
         help: |
-          View recommended and similar anime to an anime
+          Found by either the trending, popular, upcoming, current, or search
+          subcommand

@@ -43,12 +43,14 @@ Usage:
   tama --version | -v
 
 Commands:
-  trending   Trending anime
-  popular    Popular anime
-  upcoming   Upcoming anime
-  search     Search for a number of anime
-  watch      Watch an anime by episode
-  episodes   An anime's episodes
+  trending    Trending anime
+  popular     Popular anime
+  upcoming    Upcoming anime
+  current     Currently airing anime
+  search      Search for a number of anime
+  watch       Watch an anime by episode
+  episodes    An anime's episodes
+  recommend   View recommended and similar anime
 ```
 
 ### Dependencies
