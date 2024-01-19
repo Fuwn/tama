@@ -34,12 +34,13 @@ tama_usage() {
   echo
   # :command.usage_commands
   printf "%s\n" "Commands:"
-  printf "  %s   Trending anime\n" "trending"
-  printf "  %s   Popular anime\n" "popular "
-  printf "  %s   Upcoming anime\n" "upcoming"
-  printf "  %s   Search for a number of anime\n" "search  "
-  printf "  %s   Watch an anime by episode\n" "watch   "
-  printf "  %s   An anime's episodes\n" "episodes"
+  printf "  %s   Trending anime\n" "trending "
+  printf "  %s   Popular anime\n" "popular  "
+  printf "  %s   Upcoming anime\n" "upcoming "
+  printf "  %s   Search for a number of anime\n" "search   "
+  printf "  %s   Watch an anime by episode\n" "watch    "
+  printf "  %s   An anime's episodes\n" "episodes "
+  printf "  %s   \n" "recommend"
   echo
 
   # :command.long_usage
@@ -290,6 +291,46 @@ tama_episodes_usage() {
   fi
 }
 
+# :command.usage
+tama_recommend_usage() {
+  if [[ -n $long_usage ]]; then
+    printf "tama recommend\n"
+    echo
+
+  else
+    printf "tama recommend\n"
+    echo
+
+  fi
+
+  printf "Alias: r\n"
+  echo
+
+  printf "%s\n" "Usage:"
+  printf "  tama recommend ID\n"
+  printf "  tama recommend --help | -h\n"
+  echo
+
+  # :command.long_usage
+  if [[ -n $long_usage ]]; then
+    printf "%s\n" "Options:"
+
+    # :command.usage_fixed_flags
+    printf "  %s\n" "--help, -h"
+    printf "    Show this help\n"
+    echo
+
+    # :command.usage_args
+    printf "%s\n" "Arguments:"
+
+    # :argument.usage
+    printf "  %s\n" "ID"
+    printf "    View recommended and similar anime to an anime\n"
+    echo
+
+  fi
+}
+
 # :command.normalize_input
 normalize_input() {
   local arg flags
@@ -430,6 +471,13 @@ tama_episodes_command() {
 
 }
 
+# :command.function
+tama_recommend_command() {
+  # src/recommend_command.sh
+  print "/recommendations/${args[id]}"
+
+}
+
 # :command.parse_requirements
 parse_requirements() {
   # :command.fixed_flags_filter
@@ -541,6 +589,13 @@ parse_requirements() {
       action="episodes"
       shift
       tama_episodes_parse_requirements "$@"
+      shift $#
+      ;;
+
+    recommend | r)
+      action="recommend"
+      shift
+      tama_recommend_parse_requirements "$@"
       shift $#
       ;;
 
@@ -936,6 +991,62 @@ tama_episodes_parse_requirements() {
 
 }
 
+# :command.parse_requirements
+tama_recommend_parse_requirements() {
+  # :command.fixed_flags_filter
+  while [[ $# -gt 0 ]]; do
+    case "${1:-}" in
+      --help | -h)
+        long_usage=yes
+        tama_recommend_usage
+        exit
+        ;;
+
+      *)
+        break
+        ;;
+
+    esac
+  done
+
+  # :command.command_filter
+  action="recommend"
+
+  # :command.parse_requirements_while
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+    case "$key" in
+
+      -?*)
+        printf "invalid option: %s\n" "$key" >&2
+        exit 1
+        ;;
+
+      *)
+        # :command.parse_requirements_case
+        # :command.parse_requirements_case_simple
+        if [[ -z ${args['id']+x} ]]; then
+
+          args['id']=$1
+          shift
+        else
+          printf "invalid argument: %s\n" "$key" >&2
+          exit 1
+        fi
+
+        ;;
+
+    esac
+  done
+
+  # :command.required_args_filter
+  if [[ -z ${args['id']+x} ]]; then
+    printf "missing required argument: ID\nusage: tama recommend ID\n" >&2
+    exit 1
+  fi
+
+}
+
 # :command.initialize
 initialize() {
   version="0.1.0"
@@ -960,6 +1071,7 @@ run() {
     "search") tama_search_command ;;
     "watch") tama_watch_command ;;
     "episodes") tama_episodes_command ;;
+    "recommend") tama_recommend_command ;;
   esac
 }
 

@@ -1,0 +1,1 @@
+print "/recommendations/${args[id]}"
