@@ -1,4 +1,4 @@
-# 📺 `tama`
+# 📺 Tama
 
 <a href="https://anilist.co/character/161223" target="_blank"><img src="https://i.imgur.com/rxqMH46.png" align="right" height="420vw"></a>
 
