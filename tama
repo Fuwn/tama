@@ -41,7 +41,7 @@ tama_usage() {
   printf "  %s   Search for a number of anime\n" "search   "
   printf "  %s   Watch an anime by episode\n" "watch    "
   printf "  %s   An anime's episodes\n" "episodes "
-  printf "  %s   \n" "recommend"
+  printf "  %s   View recommended and similar anime\n" "recommend"
   echo
 
   # :command.long_usage
@@ -273,7 +273,7 @@ tama_watch_usage() {
 
     # :argument.usage
     printf "  %s\n" "ID"
-    printf "    Found by either the trending, popular, upcoming, or search subcommand\n"
+    printf "    Found by either the trending, popular, upcoming, current, or search\n    subcommand\n"
     echo
 
     # :argument.usage
@@ -327,11 +327,11 @@ tama_episodes_usage() {
 # :command.usage
 tama_recommend_usage() {
   if [[ -n $long_usage ]]; then
-    printf "tama recommend\n"
+    printf "tama recommend - View recommended and similar anime\n"
     echo
 
   else
-    printf "tama recommend\n"
+    printf "tama recommend - View recommended and similar anime\n"
     echo
 
   fi
@@ -358,7 +358,7 @@ tama_recommend_usage() {
 
     # :argument.usage
     printf "  %s\n" "ID"
-    printf "    View recommended and similar anime to an anime\n"
+    printf "    Found by either the trending, popular, upcoming, current, or search\n    subcommand\n"
     echo
 
   fi
