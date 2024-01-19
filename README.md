@@ -1,6 +1,6 @@
 # 📺 `tama`
 
-<img src="https://i.imgur.com/rxqMH46.png" align="right" height="420vw">
+<a href="https://anilist.co/character/161223" target="_blank"><img src="https://i.imgur.com/rxqMH46.png" align="right" height="420vw"></a>
 
 A command-line client for navigating and streaming anime from [Hiruki](https://hiruki.xyz)
 
